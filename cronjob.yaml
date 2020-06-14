@@ -1,0 +1,29 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: pgdump-s3
+spec:
+  schedule: "0 20 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: pgdump-s3
+            image: pagottoo/pgdump-s3:v0.2
+            env:
+              - name: S3_BUCKET
+                value: "s3://my-bucket"
+              - name: PG_PASS
+                value: "postgres-password"
+              - name: PG_USER
+                value: "postgres-user"
+              - name: PG_HOST
+                value: "postgres-host"
+              - name: AWS_ACCESS_KEY_ID
+                value: "my-access-key-id"
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "my-secret-access-key"
+            imagePullPolicy: Always
+          restartPolicy: OnFailure
+      backoffLimit: 3
